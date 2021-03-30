@@ -1,0 +1,53 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script src="wasm_exec.js"></script>
+    <script>
+      const go = new Go();
+      WebAssembly.instantiateStreaming(
+        fetch("./main.wasm"),
+        go.importObject
+      ).then((result) => {
+        go.run(result.instance);
+      });
+      function myFunction() {
+        var say = document.getElementsByTagName("p")[0];
+        say.innerHTML = "Click through JS";
+      }
+    </script>
+  </head>
+  <body>
+    <button onclick="myFunction()">Click me</button>
+    <input type="file" id="upload" />
+
+    <script src="//d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
+    <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
+    <div id="graph" style="text-align: center"></div>
+    <script>
+      d3.select("#graph").graphviz().renderDot("digraph  {a -> b}");
+    </script>
+    <script>
+      document
+        .getElementById("upload")
+        .addEventListener("change", readFileAsString);
+      function readFileAsString() {
+        var files = this.files;
+        if (files.length === 0) {
+          console.log("No file is selected");
+          return;
+        }
+
+        var reader = new FileReader();
+        reader.onload = function (event) {
+          console.log("File content:", event.target.result);
+          d3.select("#graph").graphviz().renderDot(event.target.result);
+        };
+        reader.readAsText(files[0]);
+      }
+      var canvas = document.getElementById("graph");
+      var img = canvas.toDataURL("image/png");
+      document.write('<img src="' + img + '"/>');
+    </script>
+  </body>
+</html>
