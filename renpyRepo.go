@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/ewenquim/renpy-graphviz/parser"
 )
 
 type APIResponse struct {
@@ -47,8 +49,10 @@ func getRenpyFromRepo(repo string) []string {
 	start := time.Now()
 	// 4-6s without goroutines
 	for _, file := range files {
-		fileContentString := getFileContent(file)
-		renpyText.WriteString(fileContentString)
+		if parser.ConsiderAsUseful(file.Path) {
+			fileContentString := getFileContent(file)
+			renpyText.WriteString(fileContentString)
+		}
 	}
 	fmt.Println("Fetching files", time.Since(start).Milliseconds())
 
