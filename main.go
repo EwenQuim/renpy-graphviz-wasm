@@ -2,39 +2,42 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"syscall/js"
-	"time"
 
 	"github.com/ewenquim/renpy-graphviz/parser"
 )
 
 func main() {
-	start := time.Now()
-	// api.github.com/search/code?accept=application/vnd.github.v3+json&q=repo:amethysts-studio/coalescence+extension:rpy
-	renpyRepoCodeLines := getRenpyFromRepo("amethysts-studio/coalescence")
+	done := make(chan bool)
 
-	fmt.Println("fetch", time.Since(start))
+	js.Global().Set("printMessage", js.FuncOf(printMessage))
+
+	fmt.Println("exiting")
+	<-done
+	fmt.Scanln()
+	fmt.Println("exited")
+
+}
+
+func printMessage(this js.Value, inputs []js.Value) interface{} {
+	callback := inputs[len(inputs)-1:][0]
+
+	fmt.Println("input", inputs[0].String())
+
+	// api.github.com/search/code?accept=application/vnd.github.v3+json&q=repo:amethysts-studio/coalescence+extension:rpy
+	renpyRepoCodeLines := strings.Split(inputs[0].String(), "\n") //[]string{"label hello:", "world", "jump label2"} //getRenpyFromRepo(inputs[0].String())
+
+	fmt.Println("string inside Go - renpy lines", renpyRepoCodeLines)
 
 	dotGraph := parser.Graph(renpyRepoCodeLines)
 
-	fmt.Println("parse", time.Since(start))
+	fmt.Println("string inside Go - graph", dotGraph.String())
 
-	fmt.Println(dotGraph.String())
-
-	document := js.Global().Get("document")
-	p := document.Call("createElement", "p")
-	p.Set("innerHTML", dotGraph.String())
-	document.Get("body").Call("appendChild", p)
-
-}
-
-// Runningtime computes running time
-func runningtime(s string) (string, time.Time) {
-	return s, time.Now()
-}
-
-// Track is this
-func track(s string, startTime time.Time) {
-	endTime := time.Now()
-	fmt.Println(s, "took", endTime.Sub(startTime))
+	// document := js.Global().Get("document")
+	// p := document.Call("createElement", "p")
+	// p.Set("innerHTML", dotGraph.String())
+	// document.Get("body").Call("appendChild", p)
+	callback.Invoke(js.Null(), dotGraph.String())
+	return nil
 }
