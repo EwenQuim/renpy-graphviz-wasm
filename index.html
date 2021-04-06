@@ -32,89 +32,16 @@
         placeholder="subpath within a repo (optional)"
       />
       <button onclick="getRepo()">Demystify</button>
-      <span id="myBar"></span>
+      <p id="errorMessage">Unable to access repo</p>
+
       <span id="loader"></span>
-      <p id="error">Unable to access repo</p>
     </header>
+
+    <div id="graph" style="text-align: center"></div>
 
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
     <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
-    <div id="graph" style="text-align: center"></div>
-    <script>
-      //contains the graphviz file as string
-      var graph = "";
-
-      function printMessagePromise(msg) {
-        return new Promise((resolve, reject) => {
-          printMessage(msg, (err, message) => {
-            console.log("cb", msg, err);
-            if (err) {
-              reject(err);
-              return;
-            }
-            resolve(message);
-          });
-        });
-      }
-
-      async function getRenpy(repoName) {
-        document.getElementById("error").display = "none";
-        const progressBar = document.getElementById("myBar");
-        progressBar.innerHTML = "0%";
-
-        renpyString = "";
-        console.log("fetching start");
-        const resp = await fetch(
-          "http://api.github.com/search/code?accept=application/vnd.github.v3+json&q=extension:rpy+repo:" +
-            repoName
-        );
-
-        if (resp.status != 200) {
-          document.getElementById("error").display = "block";
-        }
-        ans = await resp.json();
-
-        const progressTotal = ans.total_count + 5;
-        var progressCurrent = 1;
-
-        console.log("fetching end", resp, ans);
-
-        for (const item of ans.items) {
-          progressCurrent++;
-          progressBar.innerHTML =
-            Math.floor(progressCurrent / progressTotal) + "%";
-          // console.log(item.path);
-          if (!item.path.includes("tl")) {
-            rawFileUrl = item.html_url
-              .replace("github.com", "raw.githubusercontent.com")
-              .replace("blob/", "");
-            // console.log(rawFileUrl);
-            const resp = await fetch(rawFileUrl);
-            const ans = await resp.text();
-            renpyString = renpyString.concat(ans);
-          }
-        }
-
-        console.log("result:", renpyString);
-        return renpyString;
-      }
-
-      async function getRepo() {
-        const loader = document.getElementById("loader");
-        loader.style.display = "block";
-
-        var repoName = document.getElementById("repo").value;
-        console.log(repoName);
-        text = await getRenpy(repoName);
-        graph = await printMessagePromise(text);
-
-        console.log(graph);
-
-        // var say = document.getElementsByTagName("p")[0];
-        d3.select("#graph").graphviz().renderDot(graph);
-        loader.style.display = "none";
-      }
-    </script>
+    <script src="./renpy.js"></script>
   </body>
 </html>

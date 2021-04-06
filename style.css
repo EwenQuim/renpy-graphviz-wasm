@@ -10,6 +10,7 @@ header {
   background-color: lightgray;
   border-radius: 4px;
   padding: 2em;
+  z-index: 2;
 }
 
 #loader {
@@ -19,7 +20,10 @@ header {
   width: 24px;
   height: 24px;
   animation: spin 2s linear infinite;
-  display: none;
+  display: block;
+  margin: auto;
+  margin-top: 1em;
+  visibility: hidden;
 }
 
 @keyframes spin {
@@ -31,7 +35,12 @@ header {
   }
 }
 
-#error {
-  display: none;
+#errorMessage {
+  visibility: hidden;
   color: red;
+}
+
+#graph {
+  position: absolute;
+  top: 0;
 }
