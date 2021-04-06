@@ -21,7 +21,7 @@ async function getRenpy(repoName) {
   renpyString = "";
   console.log("fetching start");
   const mainResponse = await fetch(
-    "http://api.github.com/search/code?accept=application/vnd.github.v3+json&q=extension:rpy+repo:" +
+    "https://api.github.com/search/code?accept=application/vnd.github.v3+json&q=extension:rpy+repo:" +
       repoName
   );
 
