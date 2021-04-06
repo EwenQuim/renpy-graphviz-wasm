@@ -14,23 +14,28 @@
     </script>
   </head>
   <body>
-    <h1>Renpy Analyser</h1>
-    <p>
-      This tools allows you to get a graph from Ren'Py-made visual novel, from a
-      GitHub repo
-    </p>
-    <p>Here are a few interesting repos</p>
-    <input type="text" name="fname" id="repo" />
-    <input
-      type="text"
-      name="subpath"
-      id="subpath"
-      placeholder="subpath within a repo (optional)"
-    />
-    <button onclick="getRepo()">Demystify</button>
-    <div id="myProgress">
-      <div id="myBar"></div>
-    </div>
+    <header>
+      <h1>Renpy Analyser</h1>
+      <p>
+        This tools allows you to get a graph from Ren'Py-made visual novel, from
+        a GitHub repo
+      </p>
+      <p>Here are a few interesting repos</p>
+      <ul>
+        <li>amethysts-studio/coalescence</li>
+      </ul>
+      <input type="text" name="fname" id="repo" />
+      <input
+        type="text"
+        name="subpath"
+        id="subpath"
+        placeholder="subpath within a repo (optional)"
+      />
+      <button onclick="getRepo()">Demystify</button>
+      <span id="myBar"></span>
+      <span id="loader"></span>
+      <p id="error">Unable to access repo</p>
+    </header>
 
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
@@ -53,19 +58,10 @@
         });
       }
 
-      function httpGetAsync(theUrl, callback) {
-        var xmlHttp = new XMLHttpRequest();
-        xmlHttp.onreadystatechange = function () {
-          if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-            callback(xmlHttp.responseText);
-        };
-        xmlHttp.open("GET", theUrl, true); // true for asynchronous
-        xmlHttp.send(null);
-      }
-
       async function getRenpy(repoName) {
+        document.getElementById("error").display = "none";
         const progressBar = document.getElementById("myBar");
-        progressBar.style.width = "0%";
+        progressBar.innerHTML = "0%";
 
         renpyString = "";
         console.log("fetching start");
@@ -73,16 +69,20 @@
           "http://api.github.com/search/code?accept=application/vnd.github.v3+json&q=extension:rpy+repo:" +
             repoName
         );
+
+        if (resp.status != 200) {
+          document.getElementById("error").display = "block";
+        }
         ans = await resp.json();
 
         const progressTotal = ans.total_count + 5;
-        var progressCurrent = 0;
+        var progressCurrent = 1;
 
         console.log("fetching end", resp, ans);
 
         for (const item of ans.items) {
           progressCurrent++;
-          progressBar.style.width =
+          progressBar.innerHTML =
             Math.floor(progressCurrent / progressTotal) + "%";
           // console.log(item.path);
           if (!item.path.includes("tl")) {
@@ -101,19 +101,19 @@
       }
 
       async function getRepo() {
-        const progressBar = document.getElementById("myBar");
-        progressBar.style.width = "0%";
+        const loader = document.getElementById("loader");
+        loader.style.display = "block";
 
         var repoName = document.getElementById("repo").value;
         console.log(repoName);
         text = await getRenpy(repoName);
         graph = await printMessagePromise(text);
-        progressBar.style.width = "100%";
 
         console.log(graph);
 
         // var say = document.getElementsByTagName("p")[0];
         d3.select("#graph").graphviz().renderDot(graph);
+        loader.style.display = "none";
       }
     </script>
   </body>
