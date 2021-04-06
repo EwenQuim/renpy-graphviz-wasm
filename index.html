@@ -1,6 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <link rel="stylesheet" href="style.css" />
     <script src="wasm_exec.js"></script>
     <script>
       const go = new Go();
@@ -13,10 +14,23 @@
     </script>
   </head>
   <body>
+    <h1>Renpy Analyser</h1>
+    <p>
+      This tools allows you to get a graph from Ren'Py-made visual novel, from a
+      GitHub repo
+    </p>
+    <p>Here are a few interesting repos</p>
     <input type="text" name="fname" id="repo" />
-    <button onclick="getRepo()">Get Repo</button>
-    <button onclick="draw()">Dro</button>
-    <input type="file" id="upload" />
+    <input
+      type="text"
+      name="subpath"
+      id="subpath"
+      placeholder="subpath within a repo (optional)"
+    />
+    <button onclick="getRepo()">Demystify</button>
+    <div id="myProgress">
+      <div id="myBar"></div>
+    </div>
 
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
@@ -50,6 +64,9 @@
       }
 
       async function getRenpy(repoName) {
+        const progressBar = document.getElementById("myBar");
+        progressBar.style.width = "0%";
+
         renpyString = "";
         console.log("fetching start");
         const resp = await fetch(
@@ -57,9 +74,16 @@
             repoName
         );
         ans = await resp.json();
+
+        const progressTotal = ans.total_count + 5;
+        var progressCurrent = 0;
+
         console.log("fetching end", resp, ans);
 
         for (const item of ans.items) {
+          progressCurrent++;
+          progressBar.style.width =
+            Math.floor(progressCurrent / progressTotal) + "%";
           // console.log(item.path);
           if (!item.path.includes("tl")) {
             rawFileUrl = item.html_url
@@ -77,15 +101,17 @@
       }
 
       async function getRepo() {
+        const progressBar = document.getElementById("myBar");
+        progressBar.style.width = "0%";
+
         var repoName = document.getElementById("repo").value;
         console.log(repoName);
         text = await getRenpy(repoName);
         graph = await printMessagePromise(text);
-        console.log("outside Go");
-        console.log(graph);
-      }
+        progressBar.style.width = "100%";
 
-      function draw() {
+        console.log(graph);
+
         // var say = document.getElementsByTagName("p")[0];
         d3.select("#graph").graphviz().renderDot(graph);
       }
