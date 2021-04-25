@@ -34,7 +34,12 @@ async function getRenpy(repoName) {
 
   for (const item of mainAns.items) {
     // console.log(item.path);
-    if (!item.path.includes("tl")) {
+    if (
+      !item.path.includes("tl") &&
+      !item.path.includes("options.rpy") &&
+      !item.path.includes("gui.rpy") &&
+      !item.path.includes("screens.rpy")
+    ) {
       rawFileUrl = item.html_url
         .replace("github.com", "raw.githubusercontent.com")
         .replace("blob/", "");
