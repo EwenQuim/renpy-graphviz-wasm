@@ -59,7 +59,7 @@ async function getRepo() {
   const loader = document.getElementById("loader");
   loader.style.visibility = "visible";
 
-  var repoName = document.getElementById("repo").value;
+  var repoName = document.getElementById("repo").value.trim();
   console.log(repoName);
   renpyTextList = await getRenpy(repoName);
   graph = await printMessagePromise(renpyTextList);

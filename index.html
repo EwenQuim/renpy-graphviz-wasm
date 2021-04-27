@@ -17,20 +17,22 @@
     <header>
       <h1>Renpy Analyser</h1>
       <p>
-        This tools allows you to get a graph from Ren'Py-made visual novel, from
+        This tool allows you to get a graph from Ren'Py-made visual novel, from
         a GitHub repo
       </p>
+      <p>
+        Learn more and ⭐️ the
+        <a href="https://github.com/ewenQuim/renpy-graphviz">
+          project on Github !</a
+        >
+      </p>
+
       <p>Here are a few interesting repos</p>
       <ul>
         <li>amethysts-studio/coalescence</li>
+        <li>DeadSuperHero/rms-dating-simulator</li>
       </ul>
       <input type="text" name="fname" id="repo" placeholder="user/repository" />
-      <input
-        type="text"
-        name="subpath"
-        id="subpath"
-        placeholder="subpath (optional)"
-      />
       <button onclick="getRepo()">Demystify</button>
       <p id="errorMessage">Unable to access repo</p>
 
