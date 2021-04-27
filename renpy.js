@@ -46,7 +46,9 @@ async function getRenpy(repoName) {
       // console.log(rawFileUrl);
       const rep = await fetch(rawFileUrl);
       const ans = await rep.text();
-      renpyString = renpyString.concat(ans);
+      renpyString = renpyString
+        .concat(ans)
+        .concat("\n#renpy-graphviz: BREAK\n");
     }
   }
 

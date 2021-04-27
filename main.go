@@ -5,7 +5,7 @@ import (
 	"strings"
 	"syscall/js"
 
-	"github.com/ewenquim/renpy-graphviz/parser"
+	"pkg.amethysts.studio/renpy-graphviz/parser"
 )
 
 func main() {
