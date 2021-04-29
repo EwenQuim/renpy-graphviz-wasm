@@ -9,15 +9,11 @@ import (
 )
 
 func main() {
-	done := make(chan bool)
 
 	js.Global().Set("printMessage", js.FuncOf(printMessage))
 
 	fmt.Println("exiting")
-	<-done
-	fmt.Scanln()
-	fmt.Println("exited")
-
+	<-make(chan bool)
 }
 
 func printMessage(this js.Value, inputs []js.Value) interface{} {
