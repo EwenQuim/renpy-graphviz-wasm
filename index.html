@@ -18,8 +18,8 @@
     <header>
       <h1>Renpy Analyser</h1>
       <p>
-        This tool allows you to get a graph from Ren'Py-made visual novel, from
-        a GitHub repo
+        This tool allows you to get a graph from a Ren'Py-made visual novel,
+        from any GitHub repo
       </p>
       <p>
         Learn more and ⭐️ the
@@ -28,19 +28,57 @@
         >
       </p>
 
-      <p>Here are a few interesting repos</p>
-      <ul>
-        <li>amethysts-studio/coalescence</li>
-        <li>DeadSuperHero/rms-dating-simulator</li>
-        <li>GinnyN/user-interface-game</li>
-        <li>Lulufox/Moon_over_the_forest (intensive use of screens)</li>
-        <li>SG-mancer/J-game (abusive use of `call` statements)</li>
-      </ul>
       <input type="text" name="fname" id="repo" placeholder="user/repository" />
       <button onclick="getRepo()">Demystify</button>
+
+      <details open>
+        <summary>Here is a list of interesting stories, try them!</summary>
+        <ul>
+          <li>
+            amethysts-studio/<strong>coalescence </strong><br />
+            <em> ↳ best example for the tool</em>
+          </li>
+          <li>
+            renpy/renpy/<strong>the_question</strong> <br />
+            <em> ↳ simple example (note that you can specify subpaths)</em>
+          </li>
+          <li>
+            judge2020/<strong>DokiDoki-Decompile</strong> <br />
+            <em> ↳ the famous DDLC</em>
+          </li>
+          <li>
+            SG-mancer/<strong>J-game</strong> <br />
+            <em> ↳ abusive use of `call` statements</em>
+          </li>
+          <hr />
+          <li>DeadSuperHero/<strong>rms-dating-simulator</strong></li>
+          <li>GinnyN/<strong>user-interface-game</strong></li>
+          <li>Lulufox/<strong>Moon_over_the_forest</strong></li>
+          <li>
+            Your own game !<br />
+            <em>
+              ↳ ask
+              <a
+                href="https://github.com/EwenQuim/renpy-graphviz/issues/new/choose"
+              >
+                here
+              </a>
+              if you want to see your game in the list
+            </em>
+          </li>
+        </ul>
+      </details>
+
       <p id="errorMessage">Unable to access repo</p>
 
       <span id="loader"></span>
+
+      <em id="help">
+        Any issue ? Try reloading the page, or
+        <a href="https://github.com/EwenQuim/renpy-graphviz/issues/new">
+          raise an issue
+        </a>
+      </em>
     </header>
 
     <div id="graph" style="text-align: center"></div>

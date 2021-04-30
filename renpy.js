@@ -14,16 +14,26 @@ function printMessagePromise(msg) {
   });
 }
 
-async function getRenpy(repoName) {
+async function getRenpy(repoName, subPath) {
   var errorMessage = document.getElementById("errorMessage");
   errorMessage.style.visibility = "hidden";
 
-  renpyString = "";
+  var mainResponse;
+  var renpyString = "";
   console.log("fetching start");
-  const mainResponse = await fetch(
-    "https://api.github.com/search/code?accept=application/vnd.github.v3+json&q=extension:rpy+repo:" +
-      repoName
-  );
+  if (subPath) {
+    mainResponse = await fetch(
+      "https://api.github.com/search/code?accept=application/vnd.github.v3+json&q=label+path:" +
+        subPath +
+        "+extension:rpy+repo:" +
+        repoName
+    );
+  } else {
+    mainResponse = await fetch(
+      "https://api.github.com/search/code?accept=application/vnd.github.v3+json&q=label+extension:rpy+repo:" +
+        repoName
+    );
+  }
 
   if (mainResponse.status != 200) {
     errorMessage.style.visibility = "visible";
@@ -56,13 +66,29 @@ async function getRenpy(repoName) {
   return renpyString;
 }
 
+function getRepoStruct(s) {
+  const regex = /\w*\/\w*\//g;
+
+  if (regex.test(s)) {
+    last = regex.lastIndex;
+    console.log(s.substring(0, last), s.substring(last));
+
+    return [s.substring(0, last), s.substring(last)];
+  } else {
+    console.log(s, null);
+    return [s, null];
+  }
+}
+
 async function getRepo() {
   const loader = document.getElementById("loader");
   loader.style.visibility = "visible";
 
-  var repoName = document.getElementById("repo").value.trim();
-  console.log(repoName);
-  renpyTextList = await getRenpy(repoName);
+  var [repoName, subPath] = getRepoStruct(
+    document.getElementById("repo").value.trim()
+  );
+  console.log(repoName, subPath);
+  renpyTextList = await getRenpy(repoName, subPath);
   graph = await printMessagePromise(renpyTextList);
 
   console.log(graph);
