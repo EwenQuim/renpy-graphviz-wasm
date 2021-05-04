@@ -1,9 +1,9 @@
 //contains the graphviz file as string
 var graph = "";
 
-function printMessagePromise(msg) {
+function printMessagePromise(msg, boolChoice1, boolChoice2) {
   return new Promise((resolve, reject) => {
-    printMessage(msg, (err, message) => {
+    printMessage(msg, boolChoice1, boolChoice2, (err, message) => {
       console.log("cb", msg, err);
       if (err) {
         reject(err);
@@ -89,7 +89,11 @@ async function getRepo() {
   );
   console.log(repoName, subPath);
   renpyTextList = await getRenpy(repoName, subPath);
-  graph = await printMessagePromise(renpyTextList);
+  graph = await printMessagePromise(
+    renpyTextList,
+    document.getElementById("choices").checked,
+    !document.getElementById("hideAtoms").checked
+  );
 
   console.log(graph);
 

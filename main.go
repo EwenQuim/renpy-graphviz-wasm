@@ -26,7 +26,7 @@ func printMessage(this js.Value, inputs []js.Value) interface{} {
 
 	fmt.Println("string inside Go - renpy lines", renpyRepoCodeLines)
 
-	dotGraph := parser.Graph(renpyRepoCodeLines)
+	dotGraph := GraphWASM(renpyRepoCodeLines, inputs[1].Bool(), inputs[2].Bool())
 
 	fmt.Println("string inside Go - graph", dotGraph.String())
 
@@ -36,4 +36,8 @@ func printMessage(this js.Value, inputs []js.Value) interface{} {
 	// document.Get("body").Call("appendChild", p)
 	callback.Invoke(js.Null(), dotGraph.String())
 	return nil
+}
+
+func GraphWASM(text []string, options ...bool) parser.RenpyGraph {
+	return parser.Graph(text, parser.RenpyGraphOptions{ShowEdgesLabels: options[0], ShowAtoms: options[1]})
 }
