@@ -42,25 +42,31 @@ async function getRenpy(repoName, subPath) {
 
   console.log("fetching end", mainResponse, mainAns);
 
-  for (const item of mainAns.items) {
+  ttt = await Promise.all(
+    mainAns.items.map(async (item) => {
+      if (
+        !item.path.includes("tl/") &&
+        !item.path.includes("options.rpy") &&
+        !item.path.includes("gui.rpy") &&
+        !item.path.includes("screens.rpy") &&
+        !item.path.includes("00")
+      ) {
+        rawFileUrl = item.html_url
+          .replace("github.com", "raw.githubusercontent.com")
+          .replace("blob/", "");
+        // console.log(rawFileUrl);
+        const rep = await fetch(rawFileUrl);
+        return await rep.text();
+      }
+    })
+  );
+
+  console.log(ttt);
+
+  for (const ans of ttt) {
     // console.log(item.path);
-    if (
-      !item.path.includes("tl/") &&
-      !item.path.includes("options.rpy") &&
-      !item.path.includes("gui.rpy") &&
-      !item.path.includes("screens.rpy") &&
-      !item.path.includes("00")
-    ) {
-      rawFileUrl = item.html_url
-        .replace("github.com", "raw.githubusercontent.com")
-        .replace("blob/", "");
-      // console.log(rawFileUrl);
-      const rep = await fetch(rawFileUrl);
-      const ans = await rep.text();
-      renpyString = renpyString
-        .concat(ans)
-        .concat("\n#renpy-graphviz: BREAK\n");
-    }
+
+    renpyString = renpyString.concat(ans).concat("\n#renpy-graphviz: BREAK\n");
   }
 
   return renpyString;
