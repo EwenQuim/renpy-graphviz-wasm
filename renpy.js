@@ -1,5 +1,5 @@
+// import { request } from "https://cdn.skypack.dev/@octokit/request";
 //contains the graphviz file as string
-var graph = "";
 
 function printMessagePromise(msg, boolChoice1, boolChoice2) {
   return new Promise((resolve, reject) => {
@@ -35,33 +35,40 @@ async function getRenpy(repoName, subPath) {
     );
   }
 
+  // const result = await request("GET /search/code", {
+  //   headers: {
+  //     authorization: "token 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",
+  //   },
+  //   q: "label+repo:qirien/personal-space+extension:rpy",
+  // });
+  // console.log(result);
+
   if (mainResponse.status != 200) {
     errorMessage.style.visibility = "visible";
   }
-  mainAns = await mainResponse.json();
+  const mainAns = await mainResponse.json();
 
   console.log("fetching end", mainResponse, mainAns);
 
-  ttt = await Promise.all(
-    mainAns.items.map(async (item) => {
-      if (
-        !item.path.includes("tl/") &&
-        !item.path.includes("options.rpy") &&
-        !item.path.includes("gui.rpy") &&
-        !item.path.includes("screens.rpy") &&
-        !item.path.includes("00")
-      ) {
-        rawFileUrl = item.html_url
+  const ttt = await Promise.all(
+    mainAns.items
+      .filter(
+        (item) =>
+          !item.path.includes("tl/") &&
+          !item.path.includes("options.rpy") &&
+          !item.path.includes("gui.rpy") &&
+          !item.path.includes("screens.rpy") &&
+          !item.path.includes("00")
+      )
+      .map(async (item) => {
+        const rawFileUrl = item.html_url
           .replace("github.com", "raw.githubusercontent.com")
           .replace("blob/", "");
         // console.log(rawFileUrl);
         const rep = await fetch(rawFileUrl);
         return await rep.text();
-      }
-    })
+      })
   );
-
-  console.log(ttt);
 
   for (const ans of ttt) {
     // console.log(item.path);
@@ -76,7 +83,7 @@ function getRepoStruct(s) {
   const regex = /\w*\/\w*\//g;
 
   if (regex.test(s)) {
-    last = regex.lastIndex;
+    const last = regex.lastIndex;
     console.log(s.substring(0, last), s.substring(last));
 
     return [s.substring(0, last), s.substring(last)];
@@ -86,7 +93,7 @@ function getRepoStruct(s) {
   }
 }
 
-async function getRepo() {
+export async function getRepo() {
   const loader = document.getElementById("loader");
   loader.style.visibility = "visible";
 
@@ -94,8 +101,8 @@ async function getRepo() {
     document.getElementById("repo").value.trim()
   );
   console.log(repoName, subPath);
-  renpyTextList = await getRenpy(repoName, subPath);
-  graph = await printMessagePromise(
+  const renpyTextList = await getRenpy(repoName, subPath);
+  const graph = await printMessagePromise(
     renpyTextList,
     document.getElementById("choices").checked,
     !document.getElementById("hideAtoms").checked
@@ -103,6 +110,8 @@ async function getRepo() {
 
   console.log(graph);
 
-  d3.select("#graph").graphviz().renderDot(graph);
+  var t = d3.transition().duration(750).ease(d3.easeLinear);
+
+  d3.select("#graph").graphviz().transition(t).renderDot(graph);
   loader.style.visibility = "hidden";
 }

@@ -16,7 +16,7 @@
   </head>
   <body>
     <header>
-      <h1>Renpy Analyser</h1>
+      <h1 class="title">Renpy Analyser</h1>
       <p>
         This tool allows you to get a graph from a Ren'Py-made visual novel,
         from any GitHub repo. If you don't use GitHub, you can download the
@@ -29,16 +29,25 @@
         >
       </p>
 
-      <input type="text" name="fname" id="repo" placeholder="user/repository" />
-      <br />
+      <div id="search-bar">
+        <input
+          type="text"
+          name="fname"
+          id="repo"
+          placeholder="user/repository"
+        />
+        <span id="loader"></span>
+      </div>
       <input type="checkbox" id="choices" name="choices" />
       <label for="choices"> Display choices (experimental)</label><br />
       <input type="checkbox" id="hideAtoms" name="hideAtoms" checked />
       <label for="hideAtoms"> Hide lonely nodes</label><br />
-      <button onclick="getRepo()">Demystify</button>
+      <button id="triggerQuery">Demystify</button>
 
       <details open>
-        <summary>Here is a list of interesting stories, try them!</summary>
+        <summary>
+          Here is a list of interesting stories, just try and see!
+        </summary>
         <ul>
           <li>
             amethysts-studio/<strong>coalescence </strong><br />
@@ -77,8 +86,6 @@
 
       <p id="errorMessage">Unable to access repo</p>
 
-      <span id="loader"></span>
-
       <em id="help">
         Any issue ? Try reloading the page, or
         <a href="https://github.com/EwenQuim/renpy-graphviz/issues/new">
@@ -93,6 +100,13 @@
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
     <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
-    <script src="./renpy.js"></script>
+
+    <script type="module">
+      import { getRepo } from "./renpy.js";
+
+      document
+        .querySelector("#triggerQuery")
+        .addEventListener("click", getRepo);
+    </script>
   </body>
 </html>
