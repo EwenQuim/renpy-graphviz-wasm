@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strings"
 	"syscall/js"
 
@@ -12,23 +11,23 @@ func main() {
 
 	js.Global().Set("printMessage", js.FuncOf(printMessage))
 
-	fmt.Println("exiting")
+	println("exiting")
 	<-make(chan bool)
 }
 
 func printMessage(this js.Value, inputs []js.Value) interface{} {
 	callback := inputs[len(inputs)-1:][0]
 
-	fmt.Println("input", inputs[0].String())
+	// fmt.Println("input", inputs[0].String())
 
 	// api.github.com/search/code?accept=application/vnd.github.v3+json&q=repo:amethysts-studio/coalescence+extension:rpy
 	renpyRepoCodeLines := strings.Split(inputs[0].String(), "\n") //[]string{"label hello:", "world", "jump label2"} //getRenpyFromRepo(inputs[0].String())
 
-	fmt.Println("string inside Go - renpy lines", renpyRepoCodeLines)
+	// fmt.Println("string inside Go - renpy lines", renpyRepoCodeLines)
 
 	dotGraph := GraphWASM(renpyRepoCodeLines, inputs[1].Bool(), inputs[2].Bool())
 
-	fmt.Println("string inside Go - graph", dotGraph.String())
+	// fmt.Println("string inside Go - graph", dotGraph.String())
 
 	// document := js.Global().Get("document")
 	// p := document.Call("createElement", "p")
