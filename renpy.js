@@ -110,8 +110,9 @@ export async function getRepo() {
 
   console.log(graph);
 
-  var t = d3.transition().duration(750).ease(d3.easeLinear);
+  let t = d3.transition().duration(750).ease(d3.easeLinear);
 
+  d3.select("#graph").remove();
   d3.select("#graph").graphviz().transition(t).renderDot(graph);
   loader.style.visibility = "hidden";
 }
