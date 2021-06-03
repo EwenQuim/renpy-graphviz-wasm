@@ -38,5 +38,5 @@ func printMessage(this js.Value, inputs []js.Value) interface{} {
 }
 
 func GraphWASM(text []string, options ...bool) parser.RenpyGraph {
-	return parser.Graph(text, parser.RenpyGraphOptions{ShowEdgesLabels: options[0], ShowAtoms: options[1]})
+    return parser.Graph(text, parser.RenpyGraphOptions{ShowScreens: true, ShowNestedScreens:false, ShowEdgesLabels: options[0], ShowAtoms: options[1]})
 }
